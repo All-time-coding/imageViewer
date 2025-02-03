@@ -1,8 +1,9 @@
+import React, { useImperativeHandle } from 'react';
 import {
   requireNativeComponent,
   UIManager,
   Platform,
-  type ViewStyle,
+  findNodeHandle,
 } from 'react-native';
 
 const LINKING_ERROR =
@@ -12,15 +13,41 @@ const LINKING_ERROR =
   '- You are not using Expo Go\n';
 
 type ImageViewerLibraryProps = {
-  color: string;
-  style: ViewStyle;
+  urls: string[];
 };
 
-const ComponentName = 'ImageViewerLibraryView';
+export type GalleryViewRef = {
+  open: (initialIndex: number) => void;
+};
 
-export const ImageViewerLibraryView =
+const ComponentName = 'GalleryView';
+
+const GalleryViewComponent =
   UIManager.getViewManagerConfig(ComponentName) != null
-    ? requireNativeComponent<ImageViewerLibraryProps>(ComponentName)
+    ? requireNativeComponent<
+        ImageViewerLibraryProps & {
+          ref: React.MutableRefObject<GalleryViewRef>;
+        }
+      >(ComponentName)
     : () => {
         throw new Error(LINKING_ERROR);
       };
+
+export const GalleryView = (
+  { urls = [] }: ImageViewerLibraryProps,
+  ref: React.MutableRefObject<GalleryViewRef>
+) => {
+  useImperativeHandle(ref, () => ({
+    open,
+  }));
+
+  const open = (initialIndex = 0) => {
+    UIManager.dispatchViewManagerCommand(
+      findNodeHandle(ref.current as unknown as number),
+      UIManager.getViewManagerConfig('GalleryView').Commands.show!,
+      [initialIndex]
+    );
+  };
+
+  return <GalleryViewComponent ref={ref} urls={urls} />;
+};
