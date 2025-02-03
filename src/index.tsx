@@ -1,4 +1,4 @@
-import React, { useImperativeHandle } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import {
   requireNativeComponent,
   UIManager,
@@ -26,28 +26,28 @@ const GalleryViewComponent =
   UIManager.getViewManagerConfig(ComponentName) != null
     ? requireNativeComponent<
         ImageViewerLibraryProps & {
-          ref: React.MutableRefObject<GalleryViewRef>;
+          ref: React.MutableRefObject<null>;
         }
       >(ComponentName)
     : () => {
         throw new Error(LINKING_ERROR);
       };
 
-export const GalleryView = (
-  { urls = [] }: ImageViewerLibraryProps,
-  ref: React.MutableRefObject<GalleryViewRef>
-) => {
-  useImperativeHandle(ref, () => ({
-    open,
-  }));
+export const GalleryView = forwardRef<GalleryViewRef, ImageViewerLibraryProps>(
+  ({ urls = [] }, ref) => {
+    const galleryRef = useRef(null);
+    useImperativeHandle(ref, () => ({
+      open,
+    }));
 
-  const open = (initialIndex = 0) => {
-    UIManager.dispatchViewManagerCommand(
-      findNodeHandle(ref.current as unknown as number),
-      UIManager.getViewManagerConfig('GalleryView').Commands.show!,
-      [initialIndex]
-    );
-  };
+    const open = (initialIndex = 0) => {
+      UIManager.dispatchViewManagerCommand(
+        findNodeHandle(galleryRef.current),
+        UIManager.getViewManagerConfig('GalleryView').Commands.show!,
+        [initialIndex]
+      );
+    };
 
-  return <GalleryViewComponent ref={ref} urls={urls} />;
-};
+    return <GalleryViewComponent ref={galleryRef} urls={urls} />;
+  }
+);

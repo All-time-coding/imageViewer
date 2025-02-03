@@ -1,6 +1,6 @@
 {
   "name": "react-native-image-viewer-example",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -10,20 +10,26 @@
     "build:ios": "react-native build-ios --scheme ImageViewerLibraryExample --mode Debug --extra-params \"-sdk iphonesimulator CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ GCC_OPTIMIZATION_LEVEL=0 GCC_PRECOMPILE_PREFIX_HEADER=YES ASSETCATALOG_COMPILER_OPTIMIZATION=time DEBUG_INFORMATION_FORMAT=dwarf COMPILER_INDEX_STORE_ENABLE=NO\""
   },
   "dependencies": {
-    "react": "18.3.1",
-    "react-native": "0.77.0"
+    "react": "18.0.0",
+    "react-native": "0.69.6"
   },
   "devDependencies": {
-    "@babel/core": "^7.25.2",
+    "@babel/core": "^7.18.6",
     "@babel/preset-env": "^7.25.3",
     "@babel/runtime": "^7.25.0",
-    "@react-native-community/cli": "15.0.1",
+    "@react-native-community/cli": "^15.1.3",
     "@react-native-community/cli-platform-android": "15.0.1",
     "@react-native-community/cli-platform-ios": "15.0.1",
     "@react-native/babel-preset": "0.77.0",
     "@react-native/metro-config": "0.77.0",
     "@react-native/typescript-config": "0.77.0",
-    "react-native-builder-bob": "^0.36.0"
+    "@types/react": "~18.0.0",
+    "@types/react-native": "~0.69.1",
+    "react-native-builder-bob": "^0.36.0",
+    "typescript": "^4.6.3"
+  },
+  "resolutions": {
+    "react": "18.0.0"
   },
   "engines": {
     "node": ">=18"
