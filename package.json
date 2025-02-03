@@ -1,6 +1,6 @@
 {
   "name": "react-native-image-viewer",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "123",
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
