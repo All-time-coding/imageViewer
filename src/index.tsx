@@ -1,23 +1,30 @@
-import React, { forwardRef, useImperativeHandle, useRef } from 'react';
+import { forwardRef, useRef, useImperativeHandle } from 'react';
 import {
-  requireNativeComponent,
-  UIManager,
   Platform,
+  UIManager,
+  requireNativeComponent,
   findNodeHandle,
+  type NativeSyntheticEvent,
 } from 'react-native';
 
 const LINKING_ERROR =
-  `The package 'react-native-image-viewer' doesn't seem to be linked. Make sure: \n\n` +
+  "The package 'react-native-image-viewer' doesn't seem to be linked. Make sure: \n\n" +
   Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go\n';
-
+export type SizeChangeEvent = NativeSyntheticEvent<{ index: number }>;
 type ImageViewerLibraryProps = {
   urls: string[];
+  onOpen?: () => void;
+  onClose?: () => void;
+  onIndexChange?: (event: SizeChangeEvent) => void;
 };
+type ImageViewerProps = {
+  onIndexChange?: (index: number) => void;
+} & ImageViewerLibraryProps;
 
 export type GalleryViewRef = {
-  open: (initialIndex: number) => void;
+  open: (initialIndex?: number) => void;
 };
 
 const ComponentName = 'GalleryView';
@@ -33,8 +40,8 @@ const GalleryViewComponent =
         throw new Error(LINKING_ERROR);
       };
 
-export const GalleryView = forwardRef<GalleryViewRef, ImageViewerLibraryProps>(
-  ({ urls = [] }, ref) => {
+export const GalleryView = forwardRef<GalleryViewRef, ImageViewerProps>(
+  ({ urls = [], onClose, onOpen, onIndexChange }, ref) => {
     const galleryRef = useRef(null);
     useImperativeHandle(ref, () => ({
       open,
@@ -48,6 +55,16 @@ export const GalleryView = forwardRef<GalleryViewRef, ImageViewerLibraryProps>(
       );
     };
 
-    return <GalleryViewComponent ref={galleryRef} urls={urls} />;
+    return (
+      <GalleryViewComponent
+        ref={galleryRef}
+        urls={urls}
+        onClose={onClose}
+        onIndexChange={(e) => {
+          onIndexChange?.(e?.nativeEvent?.index);
+        }}
+        onOpen={onOpen}
+      />
+    );
   }
 );

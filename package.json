@@ -1,7 +1,7 @@
 {
   "name": "react-native-image-viewer",
-  "version": "0.1.1",
-  "description": "123",
+  "version": "0.1.2",
+  "description": "Library for image viewer with zoom and swipe features 🎉",
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
@@ -81,6 +81,7 @@
     "react": "18.3.1",
     "react-native": "0.77.0",
     "react-native-builder-bob": "^0.36.0",
+    "release-it": "^17.10.0",
     "turbo": "^1.10.7",
     "typescript": "^5.2.2"
   },
@@ -103,6 +104,23 @@
     "extends": [
       "@commitlint/config-conventional"
     ]
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": "chore: release ${version}",
+      "tagName": "v${version}"
+    },
+    "npm": {
+      "publish": true
+    },
+    "github": {
+      "release": true
+    },
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "preset": "angular"
+      }
+    }
   },
   "eslintConfig": {
     "root": true,

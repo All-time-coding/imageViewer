@@ -1,4 +1,3 @@
-//
 //  GalleryView.swift
 //  ImageViewerLibrary
 //
@@ -11,127 +10,146 @@ import ImageViewer
 import React
 
 struct DataItem {
-    let imageView: UIImageView
+    let url: URL
     let galleryItem: GalleryItem
 }
 
-
-
-class GalleryView:UIView,GalleryItemsDataSource{
-  
-  var items:[DataItem] = []
-  
-  @objc var urls:[String] = [] {
-    didSet {
-      items = []
-      urls.forEach {url in
-        DispatchQueue.main.async {
-          var galleryItem:GalleryItem
-          let img = UIImageView()
-          guard let imageSource = URL(string:url) else {return}
-          
-          img.load(url: imageSource)
-          
-          let fetchImageBlock: FetchImageBlock = { completion in
-            completion(img.image)
-          }
-          
-          galleryItem = GalleryItem.image(fetchImageBlock: fetchImageBlock)
-          self.items.append(DataItem(imageView: img, galleryItem: galleryItem));
+class GalleryView: UIView, GalleryItemsDataSource {
+    
+    var items: [DataItem] = []
+    
+    @objc var urls: [String] = [] {
+        didSet {
+            loadImages(from: urls)
         }
-      }
     }
-  }
-  
-  override init(frame: CGRect) {
-    super.init(frame: frame)
-  }
-  
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-  
-  @objc func showGallery(_ startIndex:Int){
-    guard let rootViewController = UIApplication.shared.windows.first?.rootViewController else {return}
-    print("StartIndex \(startIndex)")
-    let galleryViewController = GalleryViewController(startIndex: startIndex, itemsDataSource: self, configuration: galleryConfiguration())
-    rootViewController.present(galleryViewController, animated: true, completion: nil)
-  }
-  
-  
-  func provideGalleryItem(_ index:Int) -> GalleryItem {
-    return self.items[index].galleryItem;
-  }
-  
-  func itemCount() -> Int {
-    return self.items.count;
-  }
-  
-  func galleryConfiguration() -> GalleryConfiguration {
 
-      return [
+    @objc var onOpen:RCTDirectEventBlock?
+    @objc var onClose:RCTDirectEventBlock?
+    @objc var onIndexChange:RCTDirectEventBlock?
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func loadImages(from urls: [String]) {
+        items = []
+        let dispatchGroup = DispatchGroup()
+        for urlString in urls {
+            guard let url = URL(string: urlString) else { continue }
+            
+            dispatchGroup.enter()
+            loadImage(from: url) { image in
+                let fetchImageBlock: FetchImageBlock = { completion in
+                    DispatchQueue.global().async {
+                        completion(image)
+                    }
+                }
+                
+                let galleryItem = GalleryItem.image(fetchImageBlock: fetchImageBlock)
+                DispatchQueue.main.async {
+                    self.items.append(DataItem(url: url, galleryItem: galleryItem))
+                    dispatchGroup.leave()
+                }
+            }
+        }
+        
+        dispatchGroup.notify(queue: .main){}
+    }
+    
+    @objc func showGallery(_ startIndex: Int) {
+        guard let rootViewController = UIApplication.shared.windows.first?.rootViewController,
+              startIndex >= 0 && startIndex < items.count else { return }
+        
+        let galleryViewController = GalleryViewController(
+            startIndex: startIndex,
+            itemsDataSource: self,
+            configuration: galleryConfiguration()
+        )
 
-          GalleryConfigurationItem.closeButtonMode(.builtIn),
-          GalleryConfigurationItem.thumbnailsButtonMode(.none),
-          GalleryConfigurationItem.deleteButtonMode(.none),
+        galleryViewController.launchedCompletion = {
 
-          GalleryConfigurationItem.pagingMode(.carousel),
-          GalleryConfigurationItem.presentationStyle(.displacement),
-          GalleryConfigurationItem.hideDecorationViewsOnLaunch(false),
+            if self.onOpen != nil{
+                self.onOpen!(["isOpened":"true"])
+            }
+        }
 
-          GalleryConfigurationItem.swipeToDismissMode(.vertical),
-          GalleryConfigurationItem.toggleDecorationViewsBySingleTap(false),
-          GalleryConfigurationItem.activityViewByLongPress(false),
-
-          GalleryConfigurationItem.overlayColor(UIColor(white: 0.035, alpha: 1)),
-          GalleryConfigurationItem.overlayColorOpacity(1),
-          GalleryConfigurationItem.overlayBlurOpacity(1),
-          GalleryConfigurationItem.overlayBlurStyle(UIBlurEffect.Style.dark),
-          
-          GalleryConfigurationItem.videoControlsColor(.white),
-
-          GalleryConfigurationItem.maximumZoomScale(8),
-          GalleryConfigurationItem.swipeToDismissThresholdVelocity(500),
-
-          GalleryConfigurationItem.doubleTapToZoomDuration(0.15),
-
-          GalleryConfigurationItem.blurPresentDuration(0.5),
-          GalleryConfigurationItem.blurPresentDelay(0),
-          GalleryConfigurationItem.colorPresentDuration(0.25),
-          GalleryConfigurationItem.colorPresentDelay(0),
-
-          GalleryConfigurationItem.blurDismissDuration(0.1),
-          GalleryConfigurationItem.blurDismissDelay(0.4),
-          GalleryConfigurationItem.colorDismissDuration(0.45),
-          GalleryConfigurationItem.colorDismissDelay(0),
-
-          GalleryConfigurationItem.itemFadeDuration(0.3),
-          GalleryConfigurationItem.decorationViewsFadeDuration(0.15),
-          GalleryConfigurationItem.rotationDuration(0.15),
-
-          GalleryConfigurationItem.displacementDuration(0.55),
-          GalleryConfigurationItem.reverseDisplacementDuration(0.25),
-          GalleryConfigurationItem.displacementTransitionStyle(.springBounce(0.7)),
-          GalleryConfigurationItem.displacementTimingCurve(.linear),
-
-          GalleryConfigurationItem.statusBarHidden(true),
-          GalleryConfigurationItem.displacementKeepOriginalInPlace(false),
-          GalleryConfigurationItem.displacementInsetMargin(50)
-      ]
-  }
-  
+        galleryViewController.closedCompletion = {
+             if self.onClose != nil{
+                self.onClose!(["isOpened":"false"])
+        }
 }
-
-fileprivate extension UIImageView {
-  func load(url: URL) {
-    DispatchQueue.global().async { [weak self] in
-      if let data = try? Data(contentsOf: url) {
-        if let image = UIImage(data: data) {
-          DispatchQueue.main.async {
-            self?.image = image
-          }
+        galleryViewController.swipedToDismissCompletion = { 
+            if self.onClose != nil{
+                self.onClose!(["isOpened":"false"])
         }
-      }
     }
-  }
+
+        galleryViewController.landedPageAtIndexCompletion = { index in
+            if self.onIndexChange != nil{
+                self.onIndexChange!(["index":index])
+            }
+        }
+
+        rootViewController.present(galleryViewController, animated: false, completion: nil)
+    }
+
+    func provideGalleryItem(_ index: Int) -> GalleryItem {
+        return items[index].galleryItem
+    }
+
+    func itemCount() -> Int {
+        return items.count
+    }
+
+    func galleryConfiguration() -> GalleryConfiguration {
+        return [
+            GalleryConfigurationItem.closeButtonMode(.builtIn),
+            GalleryConfigurationItem.thumbnailsButtonMode(.none),
+            GalleryConfigurationItem.deleteButtonMode(.none),
+            
+            GalleryConfigurationItem.pagingMode(.carousel),
+            GalleryConfigurationItem.presentationStyle(.displacement),
+            GalleryConfigurationItem.hideDecorationViewsOnLaunch(false),
+            GalleryConfigurationItem.swipeToDismissMode(.vertical),
+            GalleryConfigurationItem.toggleDecorationViewsBySingleTap(false),
+            GalleryConfigurationItem.activityViewByLongPress(false),
+            GalleryConfigurationItem.overlayColor(UIColor(white: 0.035, alpha: 1)),
+            GalleryConfigurationItem.overlayColorOpacity(1),
+            GalleryConfigurationItem.overlayBlurOpacity(1),
+            GalleryConfigurationItem.overlayBlurStyle(UIBlurEffect.Style.dark),
+            
+            GalleryConfigurationItem.videoControlsColor(.white),
+            GalleryConfigurationItem.maximumZoomScale(8),
+            GalleryConfigurationItem.swipeToDismissThresholdVelocity(500),
+            GalleryConfigurationItem.doubleTapToZoomDuration(0.15),
+            GalleryConfigurationItem.blurPresentDuration(0.5),
+            GalleryConfigurationItem.colorPresentDuration(0.25),
+            GalleryConfigurationItem.statusBarHidden(true),
+            GalleryConfigurationItem.displacementKeepOriginalInPlace(false),
+            GalleryConfigurationItem.displacementInsetMargin(50)
+        ]
+    }
+    
+    private func loadImage(from url: URL, completion: @escaping (UIImage?) -> Void) {
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("Error loading image: \(error.localizedDescription)")
+                completion(nil)
+                return
+            }
+            
+            guard let data = data, let image = UIImage(data: data) else {
+                print("Failed to decode image from data")
+                completion(nil)
+                return
+            }
+            
+            completion(image)
+        }.resume()
+    }
 }
