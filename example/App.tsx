@@ -3,23 +3,28 @@ import {View, StyleSheet, Text} from 'react-native';
 import {GalleryView, GalleryViewRef} from './components';
 
 const randomImages: string[] = [
-  'https://loremflickr.com/320/240',
-  'https://loremflickr.com/320/240',
-  'https://loremflickr.com/320/240',
-  'https://loremflickr.com/320/240',
-  'https://loremflickr.com/320/240',
-  'https://loremflickr.com/320/240',
-  'https://loremflickr.com/320/240',
+  'https://oh.sssh.it/api/files/animals/6k2f607durw6ix5/14766203_mnim4S7hJJ.jpg',
+  'https://oh.sssh.it/api/files/animals/6k2f607durw6ix5/30138998_eh6cbcb4Sr.jpg',
+  'https://oh.sssh.it/api/files/animals/6k2f607durw6ix5/26148393_3LN5rLg0xI.jpg',
+  'https://oh.sssh.it/api/files/animals/6k2f607durw6ix5/28301817_4daHV8TdQF.jpg',
+  'https://oh.sssh.it/api/files/animals/6k2f607durw6ix5/89423953_YDJ2tk3kaw.jpg',
+  'https://oh.sssh.it/api/files/animals/6k2f607durw6ix5/25498496_bD7vbMRgQQ.jpg',
+  'https://oh.sssh.it/api/files/animals/6k2f607durw6ix5/14736276_Bv0yLVR0T1.jpg',
 ];
 export default function App() {
   const anyRef = useRef<GalleryViewRef>(null);
 
-  const open = () => {
-    anyRef?.current?.open(1);
+  const open = (idx = 1) => {
+    console.log(randomImages[idx]);
+
+    anyRef?.current?.open(idx);
   };
   return (
     <View style={styles.container}>
-      <Text onPress={open}>123</Text>
+      {randomImages.map((item, index) => (
+        <Text onPress={() => open(index)}>{item}</Text>
+      ))}
+      <Text onPress={() => open(0)}>123</Text>
       <GalleryView
         ref={anyRef}
         onOpen={() => console.log('opened')}

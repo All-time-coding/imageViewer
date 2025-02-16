@@ -37,29 +37,37 @@ class GalleryView: UIView, GalleryItemsDataSource {
     }
     
     private func loadImages(from urls: [String]) {
-        items = []
-        let dispatchGroup = DispatchGroup()
-        for urlString in urls {
-            guard let url = URL(string: urlString) else { continue }
-            
-            dispatchGroup.enter()
-            loadImage(from: url) { image in
-                let fetchImageBlock: FetchImageBlock = { completion in
-                    DispatchQueue.global().async {
-                        completion(image)
-                    }
-                }
-                
-                let galleryItem = GalleryItem.image(fetchImageBlock: fetchImageBlock)
-                DispatchQueue.main.async {
-                    self.items.append(DataItem(url: url, galleryItem: galleryItem))
-                    dispatchGroup.leave()
+    items = []
+    
+    var tempItems: [DataItem?] = Array(repeating: nil, count: urls.count)
+    
+    let dispatchGroup = DispatchGroup()
+    
+    for (index, urlString) in urls.enumerated() {
+        guard let url = URL(string: urlString) else { continue }
+        
+        dispatchGroup.enter()
+        loadImage(from: url) { image in
+            let fetchImageBlock: FetchImageBlock = { completion in
+                DispatchQueue.global().async {
+                    completion(image)
                 }
             }
+            
+            let galleryItem = GalleryItem.image(fetchImageBlock: fetchImageBlock)
+            let dataItem = DataItem(url: url, galleryItem: galleryItem)
+            
+            DispatchQueue.main.async {
+                tempItems[index] = dataItem
+                dispatchGroup.leave()
+            }
         }
-        
-        dispatchGroup.notify(queue: .main){}
     }
+    
+    dispatchGroup.notify(queue: .main) {
+        self.items = tempItems.compactMap { $0 }
+    }
+}
     
     @objc func showGallery(_ startIndex: Int) {
         guard let rootViewController = UIApplication.shared.windows.first?.rootViewController,
