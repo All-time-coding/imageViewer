@@ -1,8 +1,8 @@
-package com.imageviewer
+package com.imageviewer.extensions
 
 import android.view.ViewGroup
 import android.widget.ImageView
-import com.imageviewer.Loupe
+import com.imageViewer.loupe.Loupe
 
 fun createLoupe(
   imageView: ImageView,
@@ -36,7 +36,7 @@ fun Loupe.setOnViewTranslateListener(
     }
 
     override fun onClick(view: ImageView) {
-      return 
+      return
       TODO("Not yet implemented")
     }
 

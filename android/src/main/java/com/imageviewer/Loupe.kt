@@ -1,5 +1,4 @@
-package com.igreenwood.loupe
-
+package com.imageViewer.loupe
 import android.animation.Animator
 import android.animation.TypeEvaluator
 import android.animation.ValueAnimator
