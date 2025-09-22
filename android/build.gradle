@@ -9,7 +9,7 @@ buildscript {
   }
 
   dependencies {
-    classpath "com.android.tools.build:gradle:8.7.2"
+    classpath "com.android.tools.build:gradle:8.9.2"
     // noinspection DifferentKotlinGradleVersion
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${getExtOrDefault('kotlinVersion')}"
   }
@@ -59,6 +59,13 @@ android {
 
   }
 
+  viewBinding {
+    enabled = true
+  }
+  dataBinding {
+    enabled = true
+  }
+
   buildTypes {
     release {
       minifyEnabled false
@@ -70,20 +77,30 @@ android {
   }
 
   compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
+    sourceCompatibility JavaVersion.VERSION_11
+    targetCompatibility JavaVersion.VERSION_11
+  }
+  kotlinOptions {
+    jvmTarget = '11'
   }
 }
 
 repositories {
   mavenCentral()
   google()
+  maven { url 'https://jitpack.io' }
 }
 
 def kotlin_version = getExtOrDefault("kotlinVersion")
 
 dependencies {
+
   implementation "com.facebook.react:react-android"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  implementation "com.github.lisawray.groupie:groupie:2.10.1"
+  implementation "com.github.lisawray.groupie:groupie-viewbinding:2.10.1"
+  implementation("io.coil-kt.coil3:coil:3.3.0")
+  implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
+
 }
 

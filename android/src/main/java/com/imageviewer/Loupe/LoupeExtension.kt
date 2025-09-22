@@ -1,8 +1,7 @@
-package com.imageviewer.extensions
+package com.imageviewer.Loupe
 
 import android.view.ViewGroup
 import android.widget.ImageView
-import com.imageViewer.loupe.Loupe
 
 fun createLoupe(
   imageView: ImageView,

@@ -1,4 +1,5 @@
-package com.imageViewer.loupe
+package com.imageviewer.Loupe
+
 import android.animation.Animator
 import android.animation.TypeEvaluator
 import android.animation.ValueAnimator
@@ -24,7 +25,6 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
-
 
 class Loupe(imageView: ImageView, container: ViewGroup) : View.OnTouchListener,
     View.OnLayoutChangeListener {
@@ -187,10 +187,10 @@ class Loupe(imageView: ImageView, container: ViewGroup) : View.OnTouchListener,
             override fun onDown(e: MotionEvent): Boolean = true
 
           override fun onScroll(
-            e1: MotionEvent?,
-            e2: MotionEvent,
-            distanceX: Float,
-            distanceY: Float
+              e1: MotionEvent?,
+              e2: MotionEvent,
+              distanceX: Float,
+              distanceY: Float
           ): Boolean {
             if (e2?.pointerCount != 1) {
                     return true
@@ -205,10 +205,10 @@ class Loupe(imageView: ImageView, container: ViewGroup) : View.OnTouchListener,
           }
 
           override fun onFling(
-            e1: MotionEvent?,
-            e2: MotionEvent,
-            velocityX: Float,
-            velocityY: Float
+              e1: MotionEvent?,
+              e2: MotionEvent,
+              velocityX: Float,
+              velocityY: Float
           ): Boolean {
             e1 ?: return true
 
@@ -344,7 +344,10 @@ class Loupe(imageView: ImageView, container: ViewGroup) : View.OnTouchListener,
         val container = containerRef.get() ?: return
 
         imageView.run {
-            if (!shouldRelayout(Rect(oldLeft, oldTop, oldRight, oldBottom), Rect(left, top, right, bottom))) {
+            if (!shouldRelayout(
+                    Rect(oldLeft, oldTop, oldRight, oldBottom),
+                    Rect(left, top, right, bottom)
+                )) {
                 return
             }
 
@@ -461,7 +464,7 @@ class Loupe(imageView: ImageView, container: ViewGroup) : View.OnTouchListener,
         val toY = scroller.finalY.toFloat()
 
         flingAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
-            duration = flingAnimationDuration
+            ValueAnimator.setFrameDelay( flingAnimationDuration)
             interpolator = flingAnimationInterpolator
             addUpdateListener {
                 val amount = it.animatedValue as Float
@@ -576,7 +579,7 @@ class Loupe(imageView: ImageView, container: ViewGroup) : View.OnTouchListener,
                     // no op
                 }
             })
-            duration = scaleAnimationDuration
+            ValueAnimator.setFrameDelay(  scaleAnimationDuration)
             interpolator = doubleTapScaleAnimationInterpolator
         }.start()
     }
@@ -590,7 +593,9 @@ class Loupe(imageView: ImageView, container: ViewGroup) : View.OnTouchListener,
         val endLeft = canvasBounds.centerX() - imageWidth * minScale * 0.5f
         val endTop = canvasBounds.centerY() - imageHeight * minScale * 0.5f
         ValueAnimator.ofFloat(0f, 1f).apply {
-            duration = if (isOverScaling) {
+
+
+          val duration  =  if (isOverScaling) {
                 overScaleAnimationDuration
             } else {
                 scaleAnimationDuration
@@ -600,6 +605,7 @@ class Loupe(imageView: ImageView, container: ViewGroup) : View.OnTouchListener,
             } else {
                 doubleTapScaleAnimationInterpolator
             }
+          ValueAnimator.setFrameDelay(duration)
             addUpdateListener {
                 val value = it.animatedValue as Float
                 scale = lerp(value, startScale, endScale)
@@ -872,7 +878,7 @@ class Loupe(imageView: ImageView, container: ViewGroup) : View.OnTouchListener,
                 offset(offset.x, offset.y)
             }
             ValueAnimator.ofFloat(0f, 1f).apply {
-                duration = overScrollAnimationDuration
+                ValueAnimator.setFrameDelay( overScrollAnimationDuration)
                 interpolator = overScrollAnimationInterpolator
                 addUpdateListener {
                     val amount = it.animatedValue as Float
