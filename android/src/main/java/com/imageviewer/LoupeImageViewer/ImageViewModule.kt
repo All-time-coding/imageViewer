@@ -29,7 +29,7 @@ class ImageViewModule(reactContext: ReactApplicationContext) : ReactContextBaseJ
     private lateinit var onCloseCallback: Callback
 
     override fun getName() = NAME
-       
+
 
     @ReactMethod
     fun open(urls: ReadableArray, index: Int) {
