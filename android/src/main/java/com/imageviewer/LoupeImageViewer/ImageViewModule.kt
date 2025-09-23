@@ -52,7 +52,7 @@ class ImageViewModule(reactContext: ReactApplicationContext) : ReactContextBaseJ
                 urlList.add(urls.getString(i))
             }
         }
-        val intent = ImageViewActivity.createIntent(reactApplicationContext, urlList,0)
+        val intent = ImageViewActivity.createIntent(reactApplicationContext, urlList,index)
 
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 

@@ -1,3 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.imageviewer">
+          package="com.imageviewer"
+          <application>    
+           <activity
+            android:name=".ImageViewActivity"
+            android:exported="true"
+            android:theme="@style/AppTheme.Transparent"
+            />
+          >
+          </application>
 </manifest>
