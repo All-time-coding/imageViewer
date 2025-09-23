@@ -29,19 +29,7 @@ class ImageViewModule(reactContext: ReactApplicationContext) : ReactContextBaseJ
     private lateinit var onCloseCallback: Callback
 
     override fun getName() = NAME
-
-//    @ReactProp(name = "onChangeIndex")
-//    fun onChangeIndex(callback: Callback){
-//        onChangeIndexCallback = callback
-//    }
-//    @ReactProp(name = "onClose")
-//    fun onOpen(callback: Callback){
-//        onOpenCallback = callback
-//    }
-//    @ReactProp(name = "onOpen")
-//    fun onClose(callback: Callback){
-//        onCloseCallback = callback
-//    }
+       
 
     @ReactMethod
     fun open(urls: ReadableArray, index: Int) {
