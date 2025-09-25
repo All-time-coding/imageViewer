@@ -14,7 +14,7 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.viewpager.widget.PagerAdapter
-import coil3.load
+import coil.load
 import com.imageviewer.databinding.ImageActivityBinding
 import com.imageviewer.databinding.ItemImageBinding
 import com.imageviewer.Loupe.Loupe

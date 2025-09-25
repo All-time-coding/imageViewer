@@ -9,12 +9,10 @@ buildscript {
   }
 
   dependencies {
-    classpath "com.android.tools.build:gradle:8.9.2"
-    // noinspection DifferentKotlinGradleVersion
+    classpath "com.android.tools.build:gradle:8.5.2"
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${getExtOrDefault('kotlinVersion')}"
   }
 }
-
 
 def isNewArchitectureEnabled() {
   return rootProject.hasProperty("newArchEnabled") && rootProject.getProperty("newArchEnabled") == "true"
@@ -56,14 +54,11 @@ android {
   defaultConfig {
     minSdkVersion getExtOrIntegerDefault("minSdkVersion")
     targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
-
   }
 
-  viewBinding {
-    enabled = true
-  }
-  dataBinding {
-    enabled = true
+  buildFeatures {
+    buildConfig = true
+    dataBinding = true
   }
 
   buildTypes {
@@ -86,6 +81,9 @@ android {
 }
 
 repositories {
+  maven {
+    url("$rootDir/../node_modules/react-native/android")
+  }
   mavenCentral()
   google()
   maven { url 'https://jitpack.io' }
@@ -94,13 +92,11 @@ repositories {
 def kotlin_version = getExtOrDefault("kotlinVersion")
 
 dependencies {
-
   implementation "com.facebook.react:react-android"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation "com.github.lisawray.groupie:groupie:2.10.1"
   implementation "com.github.lisawray.groupie:groupie-viewbinding:2.10.1"
-  implementation("io.coil-kt.coil3:coil:3.3.0")
-  implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
-
+  implementation("io.coil-kt:coil:2.4.0")
+//  implementation("io.coil-kt.coil3:coil-network-okhttp:2.4.0")
 }
 
