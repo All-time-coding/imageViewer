@@ -1,11 +1,18 @@
 const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
+const path = require('path');
 
-/**
- * Metro configuration
- * https://facebook.github.io/metro/docs/configuration
- *
- * @type {import('metro-config').MetroConfig}
- */
-const config = {};
+const config = {
+  resolver: {
+    extraNodeModules: {
+      'react-native-image-viewer': path.resolve(
+        __dirname,
+        '..',
+        'lib',
+        'commonjs',
+      ),
+    },
+  },
+  watchFolders: [path.resolve(__dirname, '..')],
+};
 
 module.exports = mergeConfig(getDefaultConfig(__dirname), config);
