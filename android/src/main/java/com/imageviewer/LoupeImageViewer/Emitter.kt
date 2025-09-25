@@ -6,7 +6,7 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.modules.core.DeviceEventManagerModule
-import com.imageviewer.LoupeImageViewer.ImageViewModulePackage
+import com.imageviewer.ImageViewModulePackage
 
 
 object  Emitter {
