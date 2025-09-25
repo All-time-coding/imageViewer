@@ -56,7 +56,6 @@ class ImageViewActivity : AppCompatActivity() {
     private  val currentIndex:Int by lazy { intent.getIntExtra(ARG_CURRENT_INDEX,0) }
     private  var adapter: ImageAdapter? = null
 
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -95,9 +94,19 @@ class ImageViewActivity : AppCompatActivity() {
         supportActionBar?.apply {
             setDisplayShowHomeEnabled(true)
             setDisplayHomeAsUpEnabled(true)
+            setHomeButtonEnabled(true)
             title=""
         }
+      binding.toolbar.setNavigationOnClickListener {
+        onBackPressed()
+      }
     }
+
+  override fun onBackPressed() {
+    adapter?.clear()
+    super.onBackPressed()
+  }
+
     override fun finish() {
         Emitter.onClose()
         super.finish()
@@ -178,6 +187,16 @@ class ImageViewActivity : AppCompatActivity() {
             }
 
         }
+
+      fun clear() {
+        // clear refs
+        loupeMap.forEach {
+          val loupe = it.value
+          // clear refs
+          loupe.cleanup()
+        }
+        loupeMap.clear()
+      }
 
     }
 
