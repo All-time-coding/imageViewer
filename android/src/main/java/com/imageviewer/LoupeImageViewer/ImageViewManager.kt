@@ -3,6 +3,7 @@ import android.view.View
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.uimanager.SimpleViewManager
 import com.facebook.react.uimanager.ThemedReactContext
+import com.imageviewer.oldArchitecture.ImageViewModule
 
 class ImageViewManager(private val context: ReactApplicationContext): SimpleViewManager<View>() {
     override fun getName() = ImageViewModule.NAME

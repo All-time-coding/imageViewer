@@ -85,102 +85,110 @@
     "turbo": "^1.10.7",
     "typescript": "^5.2.2"
   },
-  "resolutions": {
-    "@types/react": "^18.2.44"
-  },
-  "peerDependencies": {
-    "react": "*",
-    "react-native": "*"
-  },
-  "packageManager": "yarn@3.6.1",
-  "jest": {
-    "preset": "react-native",
-    "modulePathIgnorePatterns": [
-      "<rootDir>/example/node_modules",
-      "<rootDir>/lib/"
-    ]
-  },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
-  },
-  "release-it": {
-    "git": {
-      "commitMessage": "chore: release ${version}",
-      "tagName": "v${version}"
+  "codegenConfig": {
+    "name": "ImageViewerSpecs",
+    "type": "all",
+    "jsSrcsDir": "src/fabric",
+    "android": {
+      "javaPackageName": "com.imageviewer"
     },
-    "npm": {
-      "publish": true
+    "resolutions": {
+      "@types/react": "^18.2.44"
     },
-    "github": {
-      "release": true
+    "peerDependencies": {
+      "react": "*",
+      "react-native": "*"
     },
-    "plugins": {
-      "@release-it/conventional-changelog": {
-        "preset": "angular"
+    "packageManager": "yarn@3.6.1",
+    "jest": {
+      "preset": "react-native",
+      "modulePathIgnorePatterns": [
+        "<rootDir>/example/node_modules",
+        "<rootDir>/lib/"
+      ]
+    },
+    "commitlint": {
+      "extends": [
+        "@commitlint/config-conventional"
+      ]
+    },
+    "release-it": {
+      "git": {
+        "commitMessage": "chore: release ${version}",
+        "tagName": "v${version}"
+      },
+      "npm": {
+        "publish": true
+      },
+      "github": {
+        "release": true
+      },
+      "plugins": {
+        "@release-it/conventional-changelog": {
+          "preset": "angular"
+        }
       }
-    }
-  },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "@react-native",
-      "prettier"
+    },
+    "eslintConfig": {
+      "root": true,
+      "extends": [
+        "@react-native",
+        "prettier"
+      ],
+      "rules": {
+        "react/react-in-jsx-scope": "off",
+        "prettier/prettier": [
+          "error",
+          {
+            "quoteProps": "consistent",
+            "singleQuote": true,
+            "tabWidth": 2,
+            "trailingComma": "es5",
+            "useTabs": false
+          }
+        ]
+      }
+    },
+    "eslintIgnore": [
+      "node_modules/",
+      "lib/"
     ],
-    "rules": {
-      "react/react-in-jsx-scope": "off",
-      "prettier/prettier": [
-        "error",
-        {
-          "quoteProps": "consistent",
-          "singleQuote": true,
-          "tabWidth": 2,
-          "trailingComma": "es5",
-          "useTabs": false
-        }
+    "prettier": {
+      "quoteProps": "consistent",
+      "singleQuote": true,
+      "tabWidth": 2,
+      "trailingComma": "es5",
+      "useTabs": false
+    },
+    "react-native-builder-bob": {
+      "source": "src",
+      "output": "lib",
+      "targets": [
+        [
+          "commonjs",
+          {
+            "esm": true
+          }
+        ],
+        [
+          "module",
+          {
+            "esm": true
+          }
+        ],
+        [
+          "typescript",
+          {
+            "project": "tsconfig.build.json",
+            "esm": true
+          }
+        ]
       ]
+    },
+    "create-react-native-library": {
+      "type": "legacy-view",
+      "languages": "kotlin-swift",
+      "version": "0.47.0"
     }
-  },
-  "eslintIgnore": [
-    "node_modules/",
-    "lib/"
-  ],
-  "prettier": {
-    "quoteProps": "consistent",
-    "singleQuote": true,
-    "tabWidth": 2,
-    "trailingComma": "es5",
-    "useTabs": false
-  },
-  "react-native-builder-bob": {
-    "source": "src",
-    "output": "lib",
-    "targets": [
-      [
-        "commonjs",
-        {
-          "esm": true
-        }
-      ],
-      [
-        "module",
-        {
-          "esm": true
-        }
-      ],
-      [
-        "typescript",
-        {
-          "project": "tsconfig.build.json",
-          "esm": true
-        }
-      ]
-    ]
-  },
-  "create-react-native-library": {
-    "type": "legacy-view",
-    "languages": "kotlin-swift",
-    "version": "0.47.0"
   }
 }
