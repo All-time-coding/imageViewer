@@ -1,6 +1,6 @@
 import React, {useRef} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
-import {GalleryView, GalleryViewRef} from 'react-native-image-viewer';
+import {GalleryView, ImageViewerRef} from 'react-native-image-viewer';
 
 const randomImages: string[] = [
   'https://oh.sssh.it/api/files/animals/6k2f607durw6ix5/14766203_mnim4S7hJJ.jpg',
@@ -13,7 +13,7 @@ const randomImages: string[] = [
 ];
 
 export default function App() {
-  const anyRef = useRef<GalleryViewRef>(null);
+  const anyRef = useRef<ImageViewerRef>(null);
 
   const open = (idx = 1) => {
     console.log(randomImages[idx]);
@@ -32,7 +32,7 @@ export default function App() {
         ref={anyRef}
         onOpen={() => console.log('opened')}
         onClose={() => console.log('closed')}
-        onIndexChange={idx => console.log('currentIndex' + idx)}
+        onChangeIndex={idx => console.log('currentIndex' + idx)}
         urls={randomImages}
       />
     </View>

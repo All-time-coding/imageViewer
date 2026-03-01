@@ -1,5 +1,5 @@
+import React, { forwardRef } from 'react';
 import { Platform, Text } from 'react-native';
-import { forwardRef } from 'react';
 
 const ImageViewer = Platform.select({
   ios: () => require('./ImageViewerIOS').GalleryView,
