@@ -160,16 +160,6 @@ class ImageViewActivity : AppCompatActivity() {
             return view == `object`
         }
 
-//      private fun addHeaders(headers: Bundle?,imageRequestBuilder: ImageRequest.Builder){
-//        if(headers !== null){
-//          val keysIterator = headers.keySet().iterator()
-//          while (keysIterator.hasNext()){
-//            val key = keysIterator.next()
-//            val value = headers.getString(key)!!
-//            imageRequestBuilder.addHeader(key,value)
-//          }
-//        }
-//      }
 
 
       private fun ImageRequest.Builder.addHeaders(headers: Bundle?) {
