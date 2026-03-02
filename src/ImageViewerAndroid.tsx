@@ -8,6 +8,7 @@ type ImageViewerProps = {
   onOpen?: () => void;
   onChangeIndex?: (index: number) => void;
   urls?: string[];
+  headers?: Record<string, string>;
 };
 
 export type ImageViewerRef = {
@@ -19,7 +20,7 @@ const NativeModule = getNativeModule();
 const { ImageViewer: NativeImageViewer } = NativeModules;
 
 export const GalleryViewAndroid = forwardRef<ImageViewerRef, ImageViewerProps>(
-  ({ onClose, onOpen, onChangeIndex, urls = [] }, ref) => {
+  ({ onClose, onOpen, onChangeIndex, urls = [], headers }, ref) => {
     const subscriptions = useRef<any[]>([]);
 
     useEffect(() => {
@@ -64,7 +65,7 @@ export const GalleryViewAndroid = forwardRef<ImageViewerRef, ImageViewerProps>(
           index = 0;
         }
 
-        NativeImageViewer.open(urls, index);
+        NativeImageViewer.open(urls, index, headers);
       },
     }));
     return <></>;

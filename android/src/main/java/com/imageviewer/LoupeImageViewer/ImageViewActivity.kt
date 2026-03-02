@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.ArrayMap
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -17,11 +18,14 @@ import androidx.appcompat.widget.Toolbar
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import coil.load
+import coil.request.ImageRequest
+import coil.request.Parameters
 import com.imageviewer.Loupe.Loupe
 import com.imageviewer.Loupe.createLoupe
 import com.imageviewer.Loupe.setOnViewTranslateListener
 import com.imageviewer.LoupeImageViewer.Emitter
 import com.imageviewer.R
+import okhttp3.Headers
 
 
 object Pref {
@@ -40,9 +44,13 @@ class ImageViewActivity : AppCompatActivity() {
     companion object {
         private const val ARG_URLS = "ARG_URLS"
         private const val ARG_CURRENT_INDEX = "ARG_CURRENT_INDEX"
-        fun createIntent(context: Context, urls: ArrayList<String>, index: Int): Intent {
+        private  const val HEADERS= "HEADERS"
+        fun createIntent(context: Context, urls: ArrayList<String>, index: Int,headers: Bundle?): Intent {
             return Intent(context, ImageViewActivity::class.java).apply {
                 putStringArrayListExtra(ARG_URLS, urls)
+              headers?.let {
+                putExtra(HEADERS,it)
+              }
                 putExtra(ARG_CURRENT_INDEX, index)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
@@ -54,6 +62,7 @@ class ImageViewActivity : AppCompatActivity() {
 
     private val urls: ArrayList<String> by lazy { intent.getStringArrayListExtra(ARG_URLS) as ArrayList<String> }
     private val currentIndex: Int by lazy { intent.getIntExtra(ARG_CURRENT_INDEX, 0) }
+    private val headers: Bundle? by lazy { intent.getBundleExtra(HEADERS) }
     private var adapter: ImageAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -151,8 +160,30 @@ class ImageViewActivity : AppCompatActivity() {
             return view == `object`
         }
 
+//      private fun addHeaders(headers: Bundle?,imageRequestBuilder: ImageRequest.Builder){
+//        if(headers !== null){
+//          val keysIterator = headers.keySet().iterator()
+//          while (keysIterator.hasNext()){
+//            val key = keysIterator.next()
+//            val value = headers.getString(key)!!
+//            imageRequestBuilder.addHeader(key,value)
+//          }
+//        }
+//      }
+
+
+      private fun ImageRequest.Builder.addHeaders(headers: Bundle?) {
+        headers?.keySet()?.forEach { key ->
+          headers.getString(key)?.let { value ->
+            addHeader(key, value)
+          }
+        }
+      }
+
+
         fun loadImage(image: ImageView, container: ViewGroup, url: String, position: Int) {
             image.load(url) {
+              addHeaders(headers)
                 listener(
                     onSuccess = { _, _ ->
                         val loupe = createLoupe(image, container) {

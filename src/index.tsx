@@ -4,7 +4,7 @@ import { Platform, Text, Image } from 'react-native';
 const ImageViewer = Platform.select({
   ios: () => require('./ImageViewerIOS').GalleryView,
   android: () => require('./ImageViewerAndroid').GalleryViewAndroid,
-  default: () => <Text>DatePicker is not supported on this platform.</Text>,
+  default: () => <Text>ImageViewer is not supported on this platform.</Text>,
 })();
 
 type ImageViewerProps = {
@@ -12,6 +12,7 @@ type ImageViewerProps = {
   onOpen?: () => void;
   onChangeIndex?: (index: number) => void;
   urls?: (string | number)[];
+  headers?: Record<string, string>;
 };
 
 export type ImageViewerRef = {
@@ -19,7 +20,7 @@ export type ImageViewerRef = {
 };
 
 function resolveUrls(urls: (string | number)[]): string[] {
-  return urls.map(url =>
+  return urls.map((url) =>
     typeof url === 'number' ? Image.resolveAssetSource(url).uri : url
   );
 }
