@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { Platform, Text } from 'react-native';
+import { Platform, Text, Image } from 'react-native';
 
 const ImageViewer = Platform.select({
   ios: () => require('./ImageViewerIOS').GalleryView,
@@ -11,15 +11,21 @@ type ImageViewerProps = {
   onClose?: () => void;
   onOpen?: () => void;
   onChangeIndex?: (index: number) => void;
-  urls?: string[];
+  urls?: (string | number)[];
 };
 
 export type ImageViewerRef = {
   open: (index?: number) => void;
 };
 
+function resolveUrls(urls: (string | number)[]): string[] {
+  return urls.map(url =>
+    typeof url === 'number' ? Image.resolveAssetSource(url).uri : url
+  );
+}
+
 export const GalleryView = forwardRef<ImageViewerRef, ImageViewerProps>(
-  (props, ref) => {
-    return <ImageViewer {...props} ref={ref} />;
+  ({ urls = [], ...props }, ref) => {
+    return <ImageViewer {...props} urls={resolveUrls(urls)} ref={ref} />;
   }
 );

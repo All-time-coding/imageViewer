@@ -2,7 +2,10 @@ import React, {useRef} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 import {GalleryView, ImageViewerRef} from 'react-native-image-viewer';
 
-const randomImages: string[] = [
+const randomImages = [
+  require('../assets/closeup-scarlet-macaw-from-side-view-scarlet-macaw-closeup-head_488145-3540.jpg'),
+  require('../assets/lavender-field-sunset-near-valensole_268835-3910.jpg'),
+  require('../assets/sun-sets-behind-mountain-ranges-600nw-2479236003.jpg'),
   'https://oh.sssh.it/api/files/animals/6k2f607durw6ix5/14766203_mnim4S7hJJ.jpg',
   'https://oh.sssh.it/api/files/animals/6k2f607durw6ix5/30138998_eh6cbcb4Sr.jpg',
   'https://oh.sssh.it/api/files/animals/6k2f607durw6ix5/26148393_3LN5rLg0xI.jpg',
