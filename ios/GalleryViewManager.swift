@@ -19,7 +19,7 @@ class GalleryViewManager: RCTViewManager {
   }
   
   override func view() -> UIView! {
-    return GalleryView()
+    return GalleryViewImpl()
   }
   
   @objc func show(_ node:NSNumber, idx:NSNumber = 0){
@@ -29,7 +29,7 @@ class GalleryViewManager: RCTViewManager {
       component.showGallery(index)
     }
   }
-  private func getGalleryView(withTag tag: NSNumber) -> GalleryView {
-    return self.bridge.uiManager.view(forReactTag: tag) as! GalleryView
+  private func getGalleryView(withTag tag: NSNumber) -> GalleryViewImpl {
+    return self.bridge.uiManager.view(forReactTag: tag) as! GalleryViewImpl
   }
 }

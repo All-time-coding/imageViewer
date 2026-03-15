@@ -5,7 +5,19 @@ import {
   requireNativeComponent,
   findNodeHandle,
   type NativeSyntheticEvent,
+  type HostComponent,
 } from 'react-native';
+import { Commands } from './fabric/GalleryViewNativeComponent';
+import type FabricGalleryViewComponent from './fabric/GalleryViewNativeComponent';
+
+const isFabricEnabled = (global as any)?.nativeFabricUIManager;
+
+function generateHeaderForNative(obj: Record<string, string>) {
+  if (!obj) {
+    return [];
+  }
+  return Object.entries(obj).map(([key, value]) => ({ key, value }));
+}
 
 const LINKING_ERROR =
   "The package 'react-native-image-viewer' doesn't seem to be linked. Make sure: \n\n" +
@@ -21,6 +33,7 @@ type ImageViewerLibraryProps = {
 };
 type ImageViewerProps = {
   onIndexChange?: (index: number) => void;
+  headers?: Record<string, string>;
 } & ImageViewerLibraryProps;
 
 export type GalleryViewRef = {
@@ -29,30 +42,45 @@ export type GalleryViewRef = {
 
 const ComponentName = 'GalleryView';
 
-const GalleryViewComponent =
-  UIManager.getViewManagerConfig(ComponentName) != null
-    ? requireNativeComponent<
-        ImageViewerLibraryProps & {
-          ref: React.MutableRefObject<null>;
-        }
-      >(ComponentName)
-    : () => {
-        throw new Error(LINKING_ERROR);
-      };
+type OldArchGalleryViewComponent =
+  | HostComponent<
+      ImageViewerLibraryProps & {
+        ref: React.MutableRefObject<null>;
+      }
+    >
+  | (() => never);
+
+let GalleryViewComponent:
+  | OldArchGalleryViewComponent
+  | typeof FabricGalleryViewComponent;
+
+if (isFabricEnabled) {
+  GalleryViewComponent = require('./fabric/GalleryViewNativeComponent').default;
+} else if (UIManager.getViewManagerConfig(ComponentName) != null) {
+  GalleryViewComponent = requireNativeComponent<ImageViewerLibraryProps>(
+    ComponentName
+  ) as unknown as OldArchGalleryViewComponent;
+} else {
+  throw new Error(LINKING_ERROR);
+}
 
 export const GalleryView = forwardRef<GalleryViewRef, ImageViewerProps>(
-  ({ urls = [], onClose, onOpen, onIndexChange }, ref) => {
+  ({ urls = [], onClose, onOpen, onIndexChange, headers }, ref) => {
     const galleryRef = useRef(null);
     useImperativeHandle(ref, () => ({
       open,
     }));
 
     const open = (initialIndex = 0) => {
-      UIManager.dispatchViewManagerCommand(
-        findNodeHandle(galleryRef.current),
-        UIManager.getViewManagerConfig('GalleryView').Commands.show!,
-        [initialIndex]
-      );
+      if (isFabricEnabled) {
+        Commands.open(galleryRef.current as any, initialIndex);
+      } else {
+        UIManager.dispatchViewManagerCommand(
+          findNodeHandle(galleryRef.current),
+          UIManager.getViewManagerConfig('GalleryView').Commands.show!,
+          [initialIndex]
+        );
+      }
     };
 
     return (
@@ -63,6 +91,7 @@ export const GalleryView = forwardRef<GalleryViewRef, ImageViewerProps>(
         onIndexChange={(e) => {
           onIndexChange?.(e?.nativeEvent?.index);
         }}
+        headers={generateHeaderForNative(headers ?? {})}
         onOpen={onOpen}
       />
     );

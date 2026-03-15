@@ -15,6 +15,9 @@ const randomImages = [
   'https://oh.sssh.it/api/files/animals/6k2f607durw6ix5/14736276_Bv0yLVR0T1.jpg',
 ];
 
+const uiManager = global?.nativeFabricUIManager ? 'Fabric' : 'Paper';
+
+
 export default function App() {
   const anyRef = useRef<GalleryViewRef>(null);
 
@@ -22,9 +25,9 @@ export default function App() {
     console.log(randomImages[idx]);
     anyRef?.current?.open(idx);
   };
-
   return (
     <View style={styles.container}>
+    <Text>{uiManager}</Text>
       {randomImages.map((item, index) => (
         <Text key={index} onPress={() => open(index)}>
           {item}
@@ -37,6 +40,10 @@ export default function App() {
         onClose={() => console.log('closed')}
         onIndexChange={idx => console.log('currentIndex' + idx)}
         urls={randomImages}
+        headers={{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer 1234567890',
+        }}
       />
     </View>
   );

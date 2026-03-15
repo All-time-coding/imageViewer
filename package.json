@@ -92,10 +92,15 @@
   "packageManager": "yarn@3.6.1",
   "codegenConfig": {
     "name": "ImageViewerSpecs",
-    "type": "modules",
+    "type": "all",
     "jsSrcsDir": "src/fabric",
     "android": {
       "javaPackageName": "com.imageviewer"
+    },
+    "ios": {
+      "componentProvider": {
+        "GalleryView": "GalleryView"
+      }
     },
     "outputDir": {
       "ios": "ios/generated",

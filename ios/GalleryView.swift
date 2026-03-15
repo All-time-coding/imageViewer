@@ -14,19 +14,63 @@ struct DataItem {
     let galleryItem: GalleryItem
 }
 
-class GalleryView: UIView, GalleryItemsDataSource {
-    
-    var items: [DataItem] = []
-    
-    @objc var urls: [String] = [] {
-        didSet {
-            loadImages(from: urls)
-        }
-    }
+@objc(GalleryViewComponentDelegate)
+public protocol GalleryViewComponentDelegate {
+  func handleOnIndexChange(index:Int)
+  func handleOnOpen()
+  func handleOnClose()
+}
 
-    @objc var onOpen:RCTDirectEventBlock?
-    @objc var onClose:RCTDirectEventBlock?
-    @objc var onIndexChange:RCTDirectEventBlock?
+
+@objc
+public class GalleryViewImpl: UIView, GalleryItemsDataSource {
+  
+  var items: [DataItem] = []
+  
+  @objc public var urls: [String] = [] {
+    didSet {
+      loadImages(from: urls)
+    }
+  }
+  
+  @objc public var headers:[String:String]?
+  
+  @objc var onOpen:RCTDirectEventBlock?
+  @objc var onClose:RCTDirectEventBlock?
+  @objc var onIndexChange:RCTDirectEventBlock?
+  
+  
+  @objc private func handleOpen(){
+    DispatchQueue.main.async {
+      if self.onOpen != nil{
+        self.onOpen?(["isOpened":"true"])
+      } else{
+        self.delegate?.handleOnOpen()
+      }
+    }
+  }
+  
+  @objc private func handleClose(){
+    DispatchQueue.main.async {
+      if self.onClose != nil{
+        self.onClose?(["isClose":"true"])
+      } else{
+        self.delegate?.handleOnClose()
+      }
+    }
+  }
+  
+  @objc private func handleIndexChange(index:Int){
+    DispatchQueue.main.async {
+      if self.onClose != nil{
+        self.onIndexChange?(["index":index])
+      } else{
+        self.delegate?.handleOnIndexChange(index: index)
+      }
+    }
+  }
+  
+  @objc public weak var delegate:GalleryViewComponentDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -69,7 +113,7 @@ class GalleryView: UIView, GalleryItemsDataSource {
     }
 }
     
-    @objc func showGallery(_ startIndex: Int) {
+    @objc public func showGallery(_ startIndex: Int) {
         guard let rootViewController = UIApplication.shared.windows.first?.rootViewController,
               startIndex >= 0 && startIndex < items.count else { return }
         
@@ -80,37 +124,28 @@ class GalleryView: UIView, GalleryItemsDataSource {
         )
 
         galleryViewController.launchedCompletion = {
-
-            if self.onOpen != nil{
-                self.onOpen!(["isOpened":"true"])
-            }
+          self.handleOpen()
         }
 
         galleryViewController.closedCompletion = {
-             if self.onClose != nil{
-                self.onClose!(["isOpened":"false"])
-        }
+          self.handleClose()
 }
         galleryViewController.swipedToDismissCompletion = { 
-            if self.onClose != nil{
-                self.onClose!(["isOpened":"false"])
-        }
+          self.handleClose()
     }
 
         galleryViewController.landedPageAtIndexCompletion = { index in
-            if self.onIndexChange != nil{
-                self.onIndexChange!(["index":index])
-            }
+          self.handleIndexChange(index: index)
         }
 
         rootViewController.present(galleryViewController, animated: false, completion: nil)
     }
 
-    func provideGalleryItem(_ index: Int) -> GalleryItem {
+    public func provideGalleryItem(_ index: Int) -> GalleryItem {
         return items[index].galleryItem
     }
 
-    func itemCount() -> Int {
+    public func itemCount() -> Int {
         return items.count
     }
 
@@ -144,7 +179,17 @@ class GalleryView: UIView, GalleryItemsDataSource {
     }
     
     private func loadImage(from url: URL, completion: @escaping (UIImage?) -> Void) {
-        URLSession.shared.dataTask(with: url) { data, response, error in
+        
+      var request = URLRequest(url: url);
+      
+      if let headers = headers{
+        for (key, value) in headers{
+          request.setValue(value, forHTTPHeaderField: key)
+        }
+      }
+      
+      
+        URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 print("Error loading image: \(error.localizedDescription)")
                 completion(nil)
