@@ -1,6 +1,6 @@
 import React, {useRef} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
-import {GalleryView, GalleryViewRef} from 'react-native-image-viewer';
+import {GalleryView, ImageViewerRef} from 'react-native-image-viewer';
 
 const randomImages = [
   require('../assets/closeup-scarlet-macaw-from-side-view-scarlet-macaw-closeup-head_488145-3540.jpg'),
@@ -15,11 +15,10 @@ const randomImages = [
   'https://oh.sssh.it/api/files/animals/6k2f607durw6ix5/14736276_Bv0yLVR0T1.jpg',
 ];
 
-const uiManager = global?.nativeFabricUIManager ? 'Fabric' : 'Paper';
-
+const uiManager = (global as any)?.nativeFabricUIManager ? 'Fabric' : 'Paper';
 
 export default function App() {
-  const anyRef = useRef<GalleryViewRef>(null);
+  const anyRef = useRef<ImageViewerRef>(null);
 
   const open = (idx = 1) => {
     console.log(randomImages[idx]);
@@ -27,7 +26,7 @@ export default function App() {
   };
   return (
     <View style={styles.container}>
-    <Text>{uiManager}</Text>
+      <Text>{uiManager}</Text>
       {randomImages.map((item, index) => (
         <Text key={index} onPress={() => open(index)}>
           {item}
@@ -38,11 +37,11 @@ export default function App() {
         ref={anyRef}
         onOpen={() => console.log('opened')}
         onClose={() => console.log('closed')}
-        onIndexChange={idx => console.log('currentIndex' + idx)}
+        onChangeIndex={idx => console.log('currentIndex' + idx)}
         urls={randomImages}
         headers={{
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer 1234567890',
+          Authorization: 'Bearer 1234567890',
         }}
       />
     </View>
