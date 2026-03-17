@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import { Platform, Text, Image } from 'react-native';
 
 const ImageViewer = Platform.select({

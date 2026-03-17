@@ -1,6 +1,7 @@
 import React, {useRef} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
-import {GalleryView, ImageViewerRef} from 'react-native-image-viewer';
+import {GalleryView} from 'react-native-image-viewer';
+import type {ImageViewerRef} from 'react-native-image-viewer';
 
 const randomImages = [
   require('../assets/closeup-scarlet-macaw-from-side-view-scarlet-macaw-closeup-head_488145-3540.jpg'),
