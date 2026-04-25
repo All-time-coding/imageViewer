@@ -5,9 +5,10 @@
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
-  "react-native": "src/index",
+  "react-native": "./src/index.tsx",
   "exports": {
     ".": {
+      "react-native": "./src/index.tsx",
       "import": {
         "types": "./lib/typescript/module/src/index.d.ts",
         "default": "./lib/module/index.js"
@@ -26,6 +27,8 @@
     "cpp",
     "*.podspec",
     "react-native.config.js",
+    "!example",
+    "!example-new-arch",
     "!ios/build",
     "!android/build",
     "!android/gradle",
