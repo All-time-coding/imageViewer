@@ -14,6 +14,6 @@ RCT_EXPORT_VIEW_PROPERTY(urls, NSArray<NSString *> *)
 RCT_EXPORT_VIEW_PROPERTY(onOpen, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onClose, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onIndexChange, RCTDirectEventBlock)
-RCT_EXTERN_METHOD(show:(nonnull NSNumber *)node idx:(nonnull NSNumber)idx)
+RCT_EXTERN_METHOD(show:(nonnull NSNumber *)node idx:(nonnull NSNumber *)idx)
 
 @end
